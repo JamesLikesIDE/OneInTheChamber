@@ -1,0 +1,13 @@
+name: OneInTheChamber
+version: 1.0
+main: net.jameslikeside.OneInTheChamber
+
+permissions:
+  oitc.usecommand:
+    description: Allow default users to use parts the /oitc command
+  oitc.admin:
+    description: Allow admins to use all functions of the /oitc command
+
+commands:
+  oitc:
+    description: The command function for One In The Chamber
