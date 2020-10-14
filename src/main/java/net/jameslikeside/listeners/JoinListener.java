@@ -17,6 +17,8 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
+        HashMapStorage.deaths.put(player.getName(), 0);
+        HashMapStorage.kills.put(player.getName(), 0);
         ScoreboardManager.setScoreboard(player);
         if(Gamestate.getCurrentGamestate() == Gamestate.STARTING || Gamestate.getCurrentGamestate() == Gamestate.INGAME){
             player.kickPlayer(OneInTheChamber.getInstance().getConfig().getString("messages.kickGameStartingStarted").replace("&", "§").replace("{gamestate}", Gamestate.getCurrentGamestate().toString()));
