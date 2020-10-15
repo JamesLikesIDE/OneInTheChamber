@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Item {
 
+    // This class holds a custom ItemBuilder method
+
     private final ItemStack current;
 
     public Item(ItemStack i) {

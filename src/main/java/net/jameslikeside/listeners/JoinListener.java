@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class JoinListener implements Listener {
 
+    // This class holds the join listener and can do many things such as set custom join message
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();

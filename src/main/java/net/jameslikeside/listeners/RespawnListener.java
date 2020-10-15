@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class RespawnListener implements Listener {
 
+    // This class holds the respawn event and sets a respawn location is a map is selected
+
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event){
         Player player = event.getPlayer();

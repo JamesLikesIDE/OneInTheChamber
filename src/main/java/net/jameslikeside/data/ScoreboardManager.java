@@ -11,6 +11,8 @@ import java.text.DecimalFormat;
 
 public class ScoreboardManager {
 
+    // This class manages the scoreboard for OneInTheChamber
+
     public static void setScoreboard(Player player){
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective obj = board.registerNewObjective("dummy", "dummy");

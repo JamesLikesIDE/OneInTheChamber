@@ -17,6 +17,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class OneInTheChamberCommand implements CommandExecutor {
 
+    // This class holds the command /oitc information
+    // I can add any // in this if it is too complicated
+
     @Override
     public boolean onCommand(CommandSender s, Command c, String string, String[] args) {
         if (s instanceof Player) {

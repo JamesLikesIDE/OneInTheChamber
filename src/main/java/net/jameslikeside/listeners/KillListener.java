@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class KillListener implements Listener {
 
+    // This class holds the death event and what to do when a player is killed by the others
+
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         final Player player = event.getEntity();

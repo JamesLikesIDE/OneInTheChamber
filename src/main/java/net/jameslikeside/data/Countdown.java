@@ -7,6 +7,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 public abstract class Countdown {
 
+    // This class is a custom CountdownAPI i made
+
     private int time;
 
     protected BukkitTask task;

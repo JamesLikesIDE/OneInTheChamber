@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class HashMapStorage {
 
+    // This class stores all the HashMap data
+
     public static<Key> void increment(Map<Key, Integer> map, Key key){
         map.putIfAbsent(key, 0);
         map.put(key, map.get(key) + 1);

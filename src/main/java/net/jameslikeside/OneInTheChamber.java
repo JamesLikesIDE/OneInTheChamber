@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class OneInTheChamber extends JavaPlugin {
 
+    // This is the main class for OneInTheChamber
+
     public static OneInTheChamber instance; // gets the plugin
     FileConfiguration config = getConfig(); // configuration file
     public static String version = "§aVersion: §e0.1";

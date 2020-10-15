@@ -14,6 +14,8 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 
 public class OtherListeners implements Listener {
 
+    // This class holds any other listeners that are not compulsory but i like to have
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         Player player = event.getPlayer();
