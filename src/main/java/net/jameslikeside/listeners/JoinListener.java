@@ -1,5 +1,7 @@
 package net.jameslikeside.listeners;
 
+import de.dytanic.cloudnet.api.CloudAPI;
+import net.jameslikeside.LabyMod;
 import net.jameslikeside.OneInTheChamber;
 import net.jameslikeside.data.*;
 import org.bukkit.Bukkit;
@@ -19,9 +21,14 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
+
         HashMapStorage.deaths.put(player.getName(), 0);
         HashMapStorage.kills.put(player.getName(), 0);
         ScoreboardManager.setScoreboard(player);
+        player.getInventory().clear();
+        player.setMaxHealth(20);
+        player.setMaxHealth(20);
+        player.setGameMode(GameMode.ADVENTURE);
         if(Gamestate.getCurrentGamestate() == Gamestate.STARTING || Gamestate.getCurrentGamestate() == Gamestate.INGAME){
             player.kickPlayer(OneInTheChamber.getInstance().getConfig().getString("messages.kickGameStartingStarted").replace("&", "§").replace("{gamestate}", Gamestate.getCurrentGamestate().toString()));
         }
@@ -76,7 +83,19 @@ public class JoinListener implements Listener {
                     }
                 }
             }.start();
+
+            LabyMod.sendCurrentPlayingGamemode(player, true, CloudAPI.getInstance().getServerId());
+            LabyMod.updateGameInfo(player, true, CloudAPI.getInstance().getServerId(), 1L, 0L);
         }
+
+        Location spawnLocation = new Location(Bukkit.getWorld(OneInTheChamber.getInstance().getConfig().getString("settings.lobby.world")),
+                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.x"),
+                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.y"),
+                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.z"));
+        spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.pitch"));
+        spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.yaw"));
+
+        player.teleport(spawnLocation);
 
     }
 

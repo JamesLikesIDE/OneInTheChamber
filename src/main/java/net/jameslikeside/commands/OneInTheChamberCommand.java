@@ -1,10 +1,7 @@
 package net.jameslikeside.commands;
 
 import net.jameslikeside.OneInTheChamber;
-import net.jameslikeside.data.Countdown;
-import net.jameslikeside.data.Gamestate;
-import net.jameslikeside.data.HashMapStorage;
-import net.jameslikeside.data.Item;
+import net.jameslikeside.data.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,10 +40,54 @@ public class OneInTheChamberCommand implements CommandExecutor {
                         HashMapStorage.map.putIfAbsent("selectedMap", "none");
                         player.sendMessage(HashMapStorage.map.get("selectedMap"));
                     }
+                    else if(args[0].equalsIgnoreCase("setLobby")){
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.world", playerWorld);
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.x", xLevel);
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.y", yLevel);
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.z", zLevel);
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.pitch", pitch);
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.yaw", yaw);
+                        OneInTheChamber.getInstance().saveConfig();
+
+                        player.sendMessage("§aLobby spawn set!");
+                    }
+                    else if(args[0].equalsIgnoreCase("endGame")){
+
+                        Location spawnLocation = new Location(Bukkit.getWorld(OneInTheChamber.getInstance().getConfig().getString("settings.lobby.world")),
+                                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.x"),
+                                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.y"),
+                                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.z"));
+                        spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.pitch"));
+                        spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.yaw"));
+
+                        for(Player all : Bukkit.getServer().getOnlinePlayers()){
+                            HashMapStorage.kills.put(all.getName(), 0);
+                            HashMapStorage.deaths.put(all.getName(), 0);
+                            all.getInventory().clear();
+                            all.setMaxHealth(20);
+                            all.setHealth(20);
+                            all.teleport(spawnLocation);
+
+                            all.sendMessage("§cGame ended");
+                        }
+                    }
+                    else if(args[0].equalsIgnoreCase("reload")){
+                        player.sendMessage("§cPlugin reloading");
+
+                        for(Player all : Bukkit.getServer().getOnlinePlayers()){
+                            OneInTheChamber.getInstance().reloadConfig();
+                            HashMapStorage.kills.put(all.getName(), 0);
+                            HashMapStorage.deaths.put(all.getName(), 0);
+                            ScoreboardManager.setScoreboard(all);
+                        }
+
+                        player.sendMessage("§aPlugin reloaded!");
+                    }
                 }
                 else if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("setMap")) {
                         String mapName = args[1];
+                        OneInTheChamber.getInstance().getConfig().set("settings.lobby.lobbySet", true);
                         OneInTheChamber.getInstance().getConfig().set("settings.selectedMap", mapName);
                         OneInTheChamber.getInstance().getConfig().set("settings." + mapName + ".world", playerWorld);
                         OneInTheChamber.getInstance().getConfig().set("settings." + mapName + ".worldName", mapName);
@@ -88,9 +129,11 @@ public class OneInTheChamberCommand implements CommandExecutor {
                 else {
                     player.sendMessage("§cUnknown command!");
                     player.sendMessage("§e/oitc help §a(Shows all available commands");
+                    player.sendMessage("§e/oitc setLobby §a(Sets the lobby of the game)");
                     player.sendMessage("§e/oitc setMap <mapName> §a(Adds a new map to the config");
                     player.sendMessage("§e/oitc selectMap <mapName> §a(Selects a map to start with when the game starts (chosen from config))");
                     player.sendMessage("§e/oitc start §a(Starts the game)");
+                    player.sendMessage("§e/oitc endGame §a(Ends the game)");
                     player.sendMessage("§e/oitc getGameState §a(Gets the current GameState of the server)");
                     player.sendMessage("§e/oitc setGameState §a(Set the GameState of the server)");
                     player.sendMessage("§e/oitc getMap §a(Gets the current selected map)");
@@ -106,6 +149,15 @@ public class OneInTheChamberCommand implements CommandExecutor {
                     player.sendMessage(OneInTheChamber.version);
                 }
                 else if(args[0].equalsIgnoreCase("help")){
+                    player.sendMessage("§e/oitc help §a(Shows all available commands");
+                    player.sendMessage("§e/oitc setLobby §a(Sets the lobby of the game)");
+                    player.sendMessage("§e/oitc setMap <mapName> §a(Adds a new map to the config");
+                    player.sendMessage("§e/oitc selectMap <mapName> §a(Selects a map to start with when the game starts (chosen from config))");
+                    player.sendMessage("§e/oitc start §a(Starts the game)");
+                    player.sendMessage("§e/oitc endGame §a(Ends the game)");
+                    player.sendMessage("§e/oitc getGameState §a(Gets the current GameState of the server)");
+                    player.sendMessage("§e/oitc setGameState §a(Set the GameState of the server)");
+                    player.sendMessage("§e/oitc getMap §a(Gets the current selected map)");
                     player.sendMessage("§e/oitc leave §a(Returns you back to the lobby (if BungeeCord is the proxy connected))");
                     player.sendMessage("§e/oitc version §a(Displays the current version)");
                 }
@@ -118,10 +170,12 @@ public class OneInTheChamberCommand implements CommandExecutor {
 
         String mapName = HashMapStorage.map.get("selectedMap");
 
-        Location spawnLocation = new Location(Bukkit.getWorld(OneInTheChamber.getInstance().getConfig().getString("settings." + mapName + ".world")),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".x"),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".y"),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings" + mapName + ".z"));
+        String worldName = OneInTheChamber.getInstance().getConfig().getString("settings." + mapName + ".world");
+        double x = OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".x");
+        double y = OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".y");
+        double z = OneInTheChamber.getInstance().getConfig().getDouble("settings" + mapName + ".z");
+
+        Location spawnLocation = new Location(Bukkit.getWorld(worldName), x, y, z);
         spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".pitch"));
         spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings." + mapName + ".yaw"));
 

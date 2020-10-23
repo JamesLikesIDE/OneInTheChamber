@@ -3,9 +3,11 @@ package net.jameslikeside;
 import net.jameslikeside.commands.OneInTheChamberCommand;
 import net.jameslikeside.data.Gamestate;
 import net.jameslikeside.data.HashMapStorage;
+import net.jameslikeside.data.ScoreboardManager;
 import net.jameslikeside.listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +27,11 @@ public class OneInTheChamber extends JavaPlugin {
         Gamestate.setGamestate(Gamestate.LOBBY);
         HashMapStorage.map.put("selectedMap", OneInTheChamber.getInstance().getConfig().getString("settings.selectedMap"));
         this.getCommand("oitc").setExecutor(new OneInTheChamberCommand());
+        for(Player all : Bukkit.getServer().getOnlinePlayers()){
+            HashMapStorage.kills.putIfAbsent(all.getName(), 0);
+            HashMapStorage.deaths.putIfAbsent(all.getName(), 0);
+            ScoreboardManager.setScoreboard(all);
+        }
     }
 
     public static OneInTheChamber getInstance(){
@@ -39,6 +46,7 @@ public class OneInTheChamber extends JavaPlugin {
         pluginManager.registerEvents(new KillListener(), this);
         pluginManager.registerEvents(new OtherListeners(), this);
         pluginManager.registerEvents(new RespawnListener(), this);
+        pluginManager.registerEvents(new Chat(), this);
     }
 
     // creates default configuration file and load it if it exists
@@ -62,6 +70,7 @@ public class OneInTheChamber extends JavaPlugin {
         config.addDefault("settings.items.swordName", "&6Iron Sword");
         config.addDefault("settings.items.bowName", "&6Bow");
         config.addDefault("settings.items.arrowName", "&fArrow");
+        config.addDefault("settings.lobby.lobbySet", false);
         config.options().copyDefaults(true);
         saveConfig();
     }

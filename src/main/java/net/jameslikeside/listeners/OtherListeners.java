@@ -2,6 +2,7 @@ package net.jameslikeside.listeners;
 
 import net.jameslikeside.data.Gamestate;
 import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +23,9 @@ public class OtherListeners implements Listener {
         if(player.getGameMode() == GameMode.CREATIVE){
             event.setCancelled(false);
         }
-        event.setCancelled(true);
+        else {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -31,7 +34,9 @@ public class OtherListeners implements Listener {
         if(player.getGameMode() == GameMode.CREATIVE){
             event.setCancelled(false);
         }
-        event.setCancelled(true);
+        else {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -52,7 +57,7 @@ public class OtherListeners implements Listener {
     @EventHandler
     public void onHit(EntityDamageEvent event){
         if(Gamestate.getCurrentGamestate() == Gamestate.LOBBY || Gamestate.getCurrentGamestate() == Gamestate.STARTING || Gamestate.getCurrentGamestate() == Gamestate.ENDED){
-            event.setCancelled(true);
+            event.setCancelled(false);
         }
     }
 

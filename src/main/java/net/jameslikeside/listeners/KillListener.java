@@ -37,11 +37,9 @@ public class KillListener implements Listener {
             }
             ItemStack a = new Item(Material.ARROW, 1).setDisplayName(OneInTheChamber.getInstance().getConfig().getString(
                     "settings.items.arrowName").replace("&", "§")).build();
-            player.getInventory().addItem(a);
+            killer.getInventory().addItem(a);
             HashMapStorage.increment(HashMapStorage.kills, killer.getName());
             HashMapStorage.increment(HashMapStorage.deaths, player.getName());
-            player.sendMessage(HashMapStorage.deaths.get(player.getName()).toString());
-            killer.sendMessage(HashMapStorage.kills.get(killer.getName()).toString());
         } else if (!(event.getEntity().getKiller() instanceof Player)) {
             event.setDeathMessage(OneInTheChamber.getInstance().getConfig().getString("messages.death").replace("&", "§").replace("{player}", player.getName()));
         }
