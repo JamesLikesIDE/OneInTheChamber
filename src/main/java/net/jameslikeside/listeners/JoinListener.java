@@ -61,7 +61,6 @@ public class JoinListener implements Listener {
                 public void count(int current) {
                     Bukkit.getServer().broadcastMessage(OneInTheChamber.getInstance().getConfig().getString("settings.startUpSequence.countdownMessage").replace("&", "§").replace("{timeLeft}", current + "").replace("{countdownTime}", OneInTheChamber.getInstance().getConfig().getInt("settings.startUpSequence.countdownTime") + ""));
                     if(current <= 0){
-
                         ItemStack s = new Item(Material.IRON_SWORD, 1).setDisplayName(OneInTheChamber.getInstance().getConfig().getString(
                                 "settings.items.swordName").replace("&", "§")).setUnbreakable(true).build();
                         ItemStack b = new Item(Material.BOW, 1).setDisplayName(OneInTheChamber.getInstance().getConfig().getString(
@@ -78,6 +77,7 @@ public class JoinListener implements Listener {
                             player.teleport(spawnLocation);
                             player.setMaxHealth(2);
                             player.setHealth(2);
+                            ScoreboardManagerIngame.setScoreboard(player);
                             Gamestate.setGamestate(Gamestate.INGAME);
                         }
                     }
@@ -88,15 +88,18 @@ public class JoinListener implements Listener {
             LabyMod.updateGameInfo(player, true, CloudAPI.getInstance().getServerId(), 1L, 0L);
         }
 
-        Location spawnLocation = new Location(Bukkit.getWorld(OneInTheChamber.getInstance().getConfig().getString("settings.lobby.world")),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.x"),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.y"),
-                OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.z"));
-        spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.pitch"));
-        spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.yaw"));
+        if(OneInTheChamber.getInstance().getConfig().get("settings.lobby") == null){
+            player.sendMessage("§cNo spawn set!");
+        } else {
+            Location spawnLocation = new Location(Bukkit.getWorld(OneInTheChamber.getInstance().getConfig().getString("settings.lobby.world")),
+                    OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.x"),
+                    OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.y"),
+                    OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.z"));
+            spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.pitch"));
+            spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.yaw"));
 
-        player.teleport(spawnLocation);
-
+            player.teleport(spawnLocation);
+        }
     }
 
 }

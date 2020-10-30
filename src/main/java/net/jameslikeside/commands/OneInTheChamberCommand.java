@@ -60,6 +60,8 @@ public class OneInTheChamberCommand implements CommandExecutor {
                         spawnLocation.setPitch((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.pitch"));
                         spawnLocation.setYaw((float) OneInTheChamber.getInstance().getConfig().getDouble("settings.lobby.yaw"));
 
+                        Gamestate.setGamestate(Gamestate.LOBBY);
+
                         for(Player all : Bukkit.getServer().getOnlinePlayers()){
                             HashMapStorage.kills.put(all.getName(), 0);
                             HashMapStorage.deaths.put(all.getName(), 0);
@@ -67,7 +69,7 @@ public class OneInTheChamberCommand implements CommandExecutor {
                             all.setMaxHealth(20);
                             all.setHealth(20);
                             all.teleport(spawnLocation);
-
+                            ScoreboardManager.setScoreboard(all);
                             all.sendMessage("§cGame ended");
                         }
                     }
@@ -201,6 +203,7 @@ public class OneInTheChamberCommand implements CommandExecutor {
                         player.teleport(spawnLocation);
                         player.setMaxHealth(2);
                         player.setHealth(2);
+                        ScoreboardManagerIngame.setScoreboard(player);
                         Gamestate.setGamestate(Gamestate.INGAME);
                     }
                 }

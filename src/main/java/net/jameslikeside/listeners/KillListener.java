@@ -1,6 +1,7 @@
 package net.jameslikeside.listeners;
 
 import net.jameslikeside.OneInTheChamber;
+import net.jameslikeside.data.Countdown;
 import net.jameslikeside.data.HashMapStorage;
 import net.jameslikeside.data.Item;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public class KillListener implements Listener {
 
         if (event.getEntity().getKiller() instanceof Player) {
             event.setDeathMessage(OneInTheChamber.getInstance().getConfig().getString("messages.kill").replace("&", "§").replace("{player}", player.getName()).replace("{killer}", killer.getName()));
+            event.setKeepInventory(true);
 
             if(HashMapStorage.kills.get(killer.getName()) >= OneInTheChamber.getInstance().getConfig().getInt("settings.maxKills")){
                 for(Player all : Bukkit.getServer().getOnlinePlayers()){
@@ -31,6 +33,15 @@ public class KillListener implements Listener {
                     Bukkit.getServer().broadcastMessage(OneInTheChamber.getInstance().getConfig().getString("messages.gameEnd.broadcastMessage").replace("&", "§").replace("{killer}", killer.getName()));
                     HashMapStorage.kills.put(all.getName(), 0);
                     HashMapStorage.deaths.put(all.getName(), 0);
+                    new Countdown(10, OneInTheChamber.getInstance()) {
+                        @Override
+                        public void count(int current) {
+                            Bukkit.getServer().broadcastMessage("§cServer restarting in §e" + current);
+                            if(current <= 0){
+                                Bukkit.getServer().spigot().restart();
+                            }
+                        }
+                    }.start();
                 }
                 killer.sendMessage(OneInTheChamber.getInstance().getConfig().getString("messages.gameEnd.winnerMessage").replace("&", "§"));
 
@@ -41,6 +52,7 @@ public class KillListener implements Listener {
             HashMapStorage.increment(HashMapStorage.kills, killer.getName());
             HashMapStorage.increment(HashMapStorage.deaths, player.getName());
         } else if (!(event.getEntity().getKiller() instanceof Player)) {
+            event.setKeepInventory(true);
             event.setDeathMessage(OneInTheChamber.getInstance().getConfig().getString("messages.death").replace("&", "§").replace("{player}", player.getName()));
         }
     }

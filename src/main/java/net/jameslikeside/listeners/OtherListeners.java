@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class OtherListeners implements Listener {
 
@@ -58,6 +59,16 @@ public class OtherListeners implements Listener {
     public void onHit(EntityDamageEvent event){
         if(Gamestate.getCurrentGamestate() == Gamestate.LOBBY || Gamestate.getCurrentGamestate() == Gamestate.STARTING || Gamestate.getCurrentGamestate() == Gamestate.ENDED){
             event.setCancelled(false);
+        }
+    }
+
+    @EventHandler
+    public void onPickup(PlayerPickupItemEvent event){
+        Player p = event.getPlayer();
+        if (p.getGameMode() == GameMode.CREATIVE) {
+            event.setCancelled(false);
+        } else {
+            event.setCancelled(true);
         }
     }
 
